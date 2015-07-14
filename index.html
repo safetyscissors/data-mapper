@@ -1,0 +1,127 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="fileupload.css">
+    <script src="generateSrc/jquery-1.11.3.min.js"></script>
+    <script src="generateSrc/underscore.js"></script>
+    <script src="generateSrc/FileSaver.js"></script>
+    <script src="generateSrc/jqueryHotkey.js"></script>
+    <script src="generateSrc/checkData.js"></script>
+    <script src="generateSrc/parseSql.js"></script>
+    <script src="generateSrc/parseData.js"></script>
+    <script src="generateSrc/readTableSql.js"></script>
+    <script src="generateSrc/readFile.js"></script>
+    <script src="generateSrc/createMap.js"></script>
+</head>
+
+<body>
+
+<!-- ------------------------------------------------------------ -->
+<!-- First bit. Reads files, csv, sql, json into table structures -->
+<!-- ------------------------------------------------------------ -->
+
+<h2>Generate Sql Import</h2>
+to dump, <input type="text" size="80" value=" mysqldump -d -h localhost -u rcuhuser -prcuhpassword rcuh users > dumpfile.sql"><br>
+
+<div class="fileBox">
+    Data Src <br>
+    <input type="file" id="data" name="data" />
+    <div class="filesUploaded"></div>
+</div>
+<div class="fileBox">
+    Main Table <br>
+    <input type="file" id="mainTable" name="mainTable" />
+    <div class="filesUploaded"></div>
+</div>
+<div class="fileBox">
+    Sub Tables<br>
+    <input type="file" id="subTables" name="subTables" multiple />
+    <div class="filesUploaded"></div>
+</div>
+<div class="fileBox">
+    Json Map File (optional)<br>
+    <input type="file" id="mapFile" name="subTables" />
+    <div class="filesUploaded"></div>
+</div>
+<div class="fileBox">
+    Fake Primary Key Start<br>
+    <input type="text" id="primaryKey" name="primaryKey" value="1" size="8">
+</div>
+
+<!-- when done, importing, edit the data mapping -->
+<div class="start bar">
+    <button>start mapping</button>
+</div><br>
+
+
+<script>
+    // LISTENERS for generate sql import section
+    var data = {};
+    $('#data').change(handleFileSelect);
+    $('#mainTable').change(handleFileSelect);
+    $('#subTables').change(handleFileSelect);
+    $('#mapFile').change(handleFileSelect);
+
+    $('.start').click(function(){ mapTableInit(data);});
+</script>
+
+<!-- ------------------------------------------------------------ -->
+<!-- Second bit. Edits the data.map object                        -->
+<!-- Also does some suggesting                                    -->
+<!-- ------------------------------------------------------------ -->
+
+<h2>Edit Map File</h2>
+<div class="fileBox" >tables<br><span id="mapTable"></span></div>
+<div class="fileBox" >fields<br><span id="mapFields"></span></div>
+<div class="fileBox">values<br><span id="mapValues"></span></div>
+
+<div class="bar savebar">
+    <button>save mapping</button>
+</div><br>
+
+<script>
+    $(document).on('change', '#tableSelectStmt', function(){ mapFieldsInit(data)});
+    $(document).on('click', '#mapFieldList li', function(evt){mapFieldClick(evt, data)});
+    $(document).on('change','#mapSuggestThreshold', function(){ suggestValueByMatch(data)});
+    $(document).on('input', '#mapValueInput', function(evt){suggestByTyping(evt,data)});
+    $(document).on('click', '.suggestUtilValue', function(evt){mapAddId(evt)});
+    $(document).on('click', '.suggestMatchValue', function(evt){mapAddId(evt)});
+    $(document).bind('keydown','down', function(evt){pressEnterToMap(evt,data)});
+    $('.savebar').click(function(){exportMapping(data)});
+</script>
+
+<!-- ------------------------------------------------------------ -->
+<!-- Third bit. Prints out data structure as series of inserts    -->
+<!-- ------------------------------------------------------------ -->
+
+<div class="bar generateSql">
+    <button>generate sql</button>
+</div><br>
+<textarea id="map"></textarea>
+<br><br>
+
+<script>
+    $('.generateSql').click(function(){mapToTables(data); convertToSqlInsert(data);});
+</script>
+
+<!-- ------------------------------------------------------------ -->
+<!-- Fourth bit. Takes db export and compares it to the csv       -->
+<!-- ------------------------------------------------------------ -->
+
+<h2>Check Sql Data</h2>
+to dump, <input id="mysqlDumpInfo" type="text" size="80" value="will generate after creating an import stmt"><br>
+<div class="fileBox">
+    new export <br>
+    <input type="file" id="checkData" name="checkData" />
+    <div class="filesUploaded"></div>
+</div>
+<div class="testData bar">
+    <button>read</button>
+</div><br>
+
+<script>
+    // LISTENERS for check sql
+    $('#checkData').change(handleFileSelect);
+    $('.testData').click(function(){ compareDumpToRaw(data) });
+</script>
+
+</body></html>
