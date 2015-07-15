@@ -15,7 +15,7 @@ function mapToTables(data){
   data.toExport = initializeExport(data);
   //for each row
   $.each(data.csv.rows, function(rowIndex, row){
-    //mapMainTable(data, row, pk);
+    mapMainTable(data, row, pk);
     mapEachSubTable(data, row, pk);
     pk++;
   });

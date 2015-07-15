@@ -34,7 +34,7 @@ function readBlob(domId) {
           console.log(data)
         }
         if(domId == 'mapFile'){
-          data.map = readJsonMap(evt.target.result);
+          data.map = _.extend(data.map, readJsonMap(evt.target.result));
         }
         if(domId == 'checkData'){
           data.dataCheck = readSqlInserts(data, evt.target.result);
