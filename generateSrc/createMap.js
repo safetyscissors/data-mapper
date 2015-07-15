@@ -49,6 +49,9 @@ function mapFieldsInit(data){
  * @param data
  */
 function mapFieldClick(evt, data){
+  //on field change, try save
+  addLinkToMapping(data);
+
   $('.highlight').removeClass('highlight');
   $('#' + evt.target.id).addClass('highlight');
 
@@ -96,7 +99,7 @@ function suggestUtil(data){
   var searchTermRaw = ($('.highlight').html());
   var output = ['<div><ul id="suggestByUtil">'];
   if(searchTermRaw.indexOf('id')>=0){
-    output.push('<li class="suggestUtilValue" id="id">$id</li>');
+    output.push('<li class="suggestUtilValue" id="id">$pk</li>');
     output.push('<li class="suggestUtilValue" id="fk">$fk</li>');
   }
   if(searchTermRaw.indexOf('line')>=0 || searchTermRaw.indexOf('number')>=0){
@@ -195,25 +198,29 @@ function mapAddId(evt){
  * @param evt
  * @param data
  */
-function pressEnterToMap(evt,data){
-  if($('#mapValues').length) {
-    var tableIndex = $('#tableSelectStmt').val();
-    var table = (tableIndex==-1)?data.mainTable:data.subTables[tableIndex];
-    var field = $('.highlight').html();
+function addLinkToMapping(data){
+  if($('#mapValues').length && $('#mapValueInput').length) {
 
-    //map the data
-    if(!data.map) data.map = {};
-    if(!data.map[table.tableName]) data.map[table.tableName] = {};
-    data.map[table.tableName][field] = $('#mapValueInput').val();
+    if($('#mapValueInput').val().length>0) {
 
-    //move to next item
-    var fieldId = $('.highlight').attr('id');
-    var nextFieldIdIndex = 1 + Number((fieldId.split('_'))[1]);
-    $('.highlight').removeClass('highlight');
-    $('#mapField_' + nextFieldIdIndex).addClass('highlight');
-    mapValueInit(data);
+      var tableIndex = $('#tableSelectStmt').val();
+      var table = (tableIndex == -1) ? data.mainTable : data.subTables[tableIndex];
+      var field = $('.highlight').html();
 
-    evt.preventDefault();
+      //map the data
+      if (!data.map) data.map = {};
+      if (!data.map[table.tableName]) data.map[table.tableName] = {};
+      data.map[table.tableName][field] = $('#mapValueInput').val();
+
+      //move to next item
+      if($('.highlight').length) {
+        var fieldId = $('.highlight').attr('id');
+        var nextFieldIdIndex = 1 + Number((fieldId.split('_'))[1]);
+        $('.highlight').removeClass('highlight');
+        $('#mapField_' + nextFieldIdIndex).addClass('highlight');
+        mapValueInit(data);
+      }
+    }
   }
 }
 

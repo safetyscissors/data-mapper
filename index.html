@@ -85,7 +85,10 @@ to dump, <input type="text" size="80" value=" mysqldump -d -h localhost -u rcuhu
     $(document).on('input', '#mapValueInput', function(evt){suggestByTyping(evt,data)});
     $(document).on('click', '.suggestUtilValue', function(evt){mapAddId(evt)});
     $(document).on('click', '.suggestMatchValue', function(evt){mapAddId(evt)});
-    $(document).bind('keydown','down', function(evt){pressEnterToMap(evt,data)});
+    $(document).bind('keydown','return', function(evt){
+        addLinkToMapping(data);
+        evt.preventDefault();
+    });
     $('.savebar').click(function(){exportMapping(data)});
 </script>
 
