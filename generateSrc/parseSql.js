@@ -13,10 +13,9 @@ function createMap(table){
 function mapToTables(data){
   var pk = Number($('#primaryKey').val());
   data.toExport = initializeExport(data);
-
   //for each row
   $.each(data.csv.rows, function(rowIndex, row){
-    mapMainTable(data, row, pk);
+    //mapMainTable(data, row, pk);
     mapEachSubTable(data, row, pk);
     pk++;
   });
@@ -95,6 +94,8 @@ function initializeExport(data){
  * @param pk
  */
 function mapMainTable(data, row, pk){
+  if(!_.has(data.map,data.mainTable.tableName) || !data.map[data.mainTable.tableName]) return;
+
   var mainTableRow = createTableRow(data.mainTable.tableName, pk, null);
   $.each(data.map[data.mainTable.tableName], function(dbColumn, csvColumn){
 
@@ -118,9 +119,10 @@ function mapEachSubTable(data, row, pk){
     //group objects by the same indexNumber
     var subTableRows = {};
 
+    if(!_.has(data.map, subTable.tableName)) return;
+
     //look through each map field
     $.each(data.map[subTable.tableName], function(subTableColumnName, csvColumnName){
-
       //skip if looking at a calculated value
       if(csvColumnName.indexOf('$') == 0 ) return;
 
@@ -184,6 +186,10 @@ function createTableRow(subTableName, primaryKey, rowNumber){
   //set fk
   if(invertedMapping['$fk']) {
     newRow[invertedMapping['$fk']] = primaryKey;
+  }
+
+  if(invertedMapping['$modelName']){
+    newRow[invertedMapping['$modelName']] = $('#modelNameInput').val();
   }
 
   //set lineNumber

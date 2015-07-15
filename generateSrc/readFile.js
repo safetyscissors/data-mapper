@@ -1,10 +1,5 @@
 function readBlob(domId) {
 
-  //hard reset a resubmitted subtable list of files
-  if(domId == 'subTables'){
-    data.subTables = [];
-  }
-
   var files = $('#'+domId)[0].files;
   if (!files.length) {
     alert('Please select a file!');
@@ -21,7 +16,13 @@ function readBlob(domId) {
     // If we use onloadend, we need to check the readyState.
     reader.onloadend = function(evt) {
       if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-        if(domId == 'data') data.csv = readCsvRaw(evt.target.result);
+        if(domId == 'data'){
+          data.csv = readCsvRaw(evt.target.result);
+
+          //when you load csv data, it creates the attachments subtable too
+          createAttachmentTable(data);
+          console.log(data)
+        }
         if(domId == 'mainTable') {
           data.mainTable = readSqlRaw(evt.target.result);
           //createMap(data.mainTable);
@@ -30,6 +31,7 @@ function readBlob(domId) {
           if(!data.subTables) data.subTables = [];
           data.subTables.push(readSqlRaw(evt.target.result));
           //createMap(data.subTables.slice(-1).pop());
+          console.log(data)
         }
         if(domId == 'mapFile'){
           data.map = readJsonMap(evt.target.result);

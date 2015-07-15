@@ -134,3 +134,17 @@ function readSqlInserts(data, fileData){
 
   return dbRows;
 }
+
+function createAttachmentTable(data){
+  var sql = 'CREATE TABLE `domino_document_mapping` (\n  `domino_document_mapping_id` int(11) NOT NULL AUTO_INCREMENT,\n  `domino_document_mapping_domino_id` varchar(255) NOT NULL, \n  `domino_document_mapping_model_name` varchar(255) NOT NULL,\n  `domino_document_mapping_cloud_id` int(11) NOT NULL,\n  PRIMARY KEY (`domino_document_mapping_id`)';
+
+  if(!_.has(data, 'map')) data.map = {};
+  data.map['domino_document_mapping'] = {
+    domino_document_mapping_cloud_id:'$fk',
+    domino_document_mapping_model_name:'$modelName',
+    domino_document_mapping_domino_id:'DocumentUNID'
+  };
+
+  if(!_.has(data, 'subTables')) data.subTables = [];
+  data.subTables.push(readSqlRaw(sql));
+}

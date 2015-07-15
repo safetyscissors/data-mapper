@@ -44,7 +44,9 @@ to dump, <input type="text" size="80" value=" mysqldump -d -h localhost -u rcuhu
 </div>
 <div class="fileBox">
     Fake Primary Key Start<br>
-    <input type="text" id="primaryKey" name="primaryKey" value="1" size="8">
+    <input type="text" id="primaryKey" name="primaryKey" value="1" size="8"><br>
+    Model Name<br>
+    <input type="text" id="modelNameInput" name="modelNameInput">
 </div>
 
 <!-- when done, importing, edit the data mapping -->
@@ -56,12 +58,13 @@ to dump, <input type="text" size="80" value=" mysqldump -d -h localhost -u rcuhu
 <script>
     // LISTENERS for generate sql import section
     var data = {};
+
     $('#data').change(handleFileSelect);
     $('#mainTable').change(handleFileSelect);
     $('#subTables').change(handleFileSelect);
     $('#mapFile').change(handleFileSelect);
 
-    $('.start').click(function(){ mapTableInit(data);});
+    $('.start').click(function(){ mapTableInit(data); });
 </script>
 
 <!-- ------------------------------------------------------------ -->
@@ -103,7 +106,7 @@ to dump, <input type="text" size="80" value=" mysqldump -d -h localhost -u rcuhu
 <br><br>
 
 <script>
-    $('.generateSql').click(function(){mapToTables(data); convertToSqlInsert(data);});
+    $('.generateSql').click(function(){ mapToTables(data); convertToSqlInsert(data);});
 </script>
 
 <!-- ------------------------------------------------------------ -->
